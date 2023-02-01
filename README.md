@@ -6,3 +6,4 @@ Current Version: 1.5S
 Updates coming soon:
 An easy way to add custom themes
 
+Public Hosting is not recommended
