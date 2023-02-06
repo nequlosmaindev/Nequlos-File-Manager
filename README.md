@@ -4,6 +4,6 @@ Nequlos is a powerful php file manager that is free to use and is portable so yo
 Current Version: 1.5S
 
 Updates coming soon:
-An easy way to add custom themes
+Central Command Center, current feature will be backup directory creation.
 
 Public Hosting is not recommended
