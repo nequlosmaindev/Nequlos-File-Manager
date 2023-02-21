@@ -9,3 +9,13 @@ Updates coming soon:
 Language change support.
 
 Public Hosting is not recommended
+
+
+make sure you create a .htaccess file with this in it:
+
+php_value upload_max_filesize 1024M
+php_value post_max_size 1024M
+<FilesMatch ".*\.(txt)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
