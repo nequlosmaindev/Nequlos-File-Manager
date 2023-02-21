@@ -6,6 +6,6 @@ Current Version: 1.5S
 Includes XSRF Protection
 
 Updates coming soon:
-Central Command Center, current feature will be backup directory creation.
+Language change support.
 
 Public Hosting is not recommended
