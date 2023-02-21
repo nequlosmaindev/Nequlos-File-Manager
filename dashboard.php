@@ -1,6 +1,33 @@
 <?php
+include("langselect.php");
+$maindir = "your_files";
+	if(is_dir($maindir)) {
+		chdir('your_files');
+	} else {
+		mkdir('your_files');
+		chdir('your_files');
+		}
 include("configuration.php");
+if ($accessdenied == true){
+	header('Location: accessdenied.php');
+}
+else{
+  
+}
+
+chdir('../');
+$file = 'log.txt';
+
+if(!is_file($file)){
+    $contents = '';       
+    file_put_contents($file, $contents);   
+}
+chdir('your_files');
+
+
+
 //Disable error report for undefined superglobals
+error_reporting(E_ERROR | E_PARSE);
 error_reporting( error_reporting() & ~E_NOTICE );
 
 if($PASSWORD) {
@@ -13,15 +40,21 @@ if($PASSWORD) {
 			$_SESSION['_sfm_allowed'] = true;
 			header('Location: ?');
 		}
-		echo '<html><body><style>
+		echo '<title>';
+		echo ($linelogin);
+		echo '</title>';
+		echo '
+		<html><body>
+		<link rel="stylesheet" href="maincssfilepartforfmaccess.css"> 
+		<style>
 		p{
 			margin-bottom:5px;
 				margin-top:5px;
 				font-size: 20px;
 			  background:
-				  linear-gradient(to right,
-					  red,
-					  #ff6600);
+			  linear-gradient(to right,
+			  #00e6e6,
+			  #1ac6ff);
 			  display: inline-block;
 			
 			
@@ -69,9 +102,9 @@ if($PASSWORD) {
 				margin-top:5px;
 				font-size: 46px;
 			  background:
-				  linear-gradient(to right,
-					  red,
-					  #ff6600);
+			  linear-gradient(to right,
+			  #00e6e6,
+			  #1ac6ff);
 			  display: inline-block;
 			
 			
@@ -82,16 +115,16 @@ if($PASSWORD) {
 			</style>
 			<div class="centeredlogin">
 			<div class="logodiv">
-			<h1 class="text">NEQULOS</h1>
+			<h1 class="text">NEQULOS FILEOP</h1>
 			<br>
-			<p>Type your password in (it is stored in your configuration file):</p>
-</div>
-			<form action=? method=post><input type=password name=p autofocus placeholder="Your Password"/>
-			</form>';
-			if($recoverypassword){
-				echo '<p>Forgot Your Password? Check your configuration file or Press <a href="forgot.php">Forgot</a><p>';
-			}
-			echo '
+			<p>';
+			echo ($linetypepassword);
+			echo '</p>
+            </div>
+			<form action=? method=post><input type=password name=p autofocus placeholder="';
+			echo ($lineyourpassword);
+			echo '"/>
+			</form>
 			</div>
 			</body>
 			</html>';
@@ -102,20 +135,20 @@ if($PASSWORD) {
 
 
 // must be in UTF-8 or `basename` doesn't work
-setlocale(LC_ALL,'en_US.UTF-8');
+setlocale(LC_ALL,'UTF-8');
 
 $tmp_dir = dirname($_SERVER['SCRIPT_FILENAME']);
 if(DIRECTORY_SEPARATOR==='\\') $tmp_dir = str_replace('/',DIRECTORY_SEPARATOR,$tmp_dir);
 $tmp = get_absolute_path($tmp_dir . '/' .$_REQUEST['file']);
 
 if($tmp === false)
-	err(404,'File or Directory Not Found');
+	err(404,'404');
 if(substr($tmp, 0,strlen($tmp_dir)) !== $tmp_dir)
-	err(403,"Forbidden");
+	err(403,"403");
 if(strpos($_REQUEST['file'], DIRECTORY_SEPARATOR) === 0)
-	err(403,"Forbidden");
+	err(403,"403");
 if(preg_match('@^.+://@',$_REQUEST['file'])) {
-	err(403,"Forbidden");
+	err(403,"403");
 }
 
 
@@ -155,7 +188,7 @@ if($_GET['do'] == 'list') {
 			return $f1_key > $f2_key;
 		});
 	} else {
-		err(412,"Not a Directory");
+		err(412,"412");
 	}
 	echo json_encode(['success' => true, 'is_writable' => is_writable($file), 'results' =>$result]);
 	exit;
@@ -176,14 +209,14 @@ if($_GET['do'] == 'list') {
 } elseif ($_POST['do'] == 'upload' && $allow_upload) {
 	foreach($disallowed_patterns as $pattern)
 		if(fnmatch($pattern, $_FILES['file_data']['name']))
-			err(403,"Files of this type are not allowed.");
+			err(403,"403");
 
 	$res = move_uploaded_file($_FILES['file_data']['tmp_name'], $file.'/'.$_FILES['file_data']['name']);
 	exit;
 } elseif ($_GET['do'] == 'download') {
 	foreach($disallowed_patterns as $pattern)
 		if(fnmatch($pattern, $file))
-			err(403,"Files of this type are not allowed.");
+			err(403,"403");
 
 	$filename = basename($file);
 	$finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -276,323 +309,63 @@ $MAX_UPLOAD_SIZE = min(asBytes(ini_get('post_max_size')), asBytes(ini_get('uploa
 
 ?>
 <!DOCTYPE html>
+<link rel="stylesheet" href="maincssfilepartforfmaccess.css">  
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<html>
-	<title><?php if ($servername){echo $servername;} else{echo "NEQULOS";}?></title>
+<html lang="en">
+	<title><?php if ($servername){echo $servername;} else{echo "NEQULOS FILEOP";}?></title>
 	<head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
-<div class="header">
+<div class="vulcloud">
 	
+	<?php
+	
+if ($security_warnings == 'false'){
+
+}
+if ($security_warnings == 'true'){
+	include 'vulpasslist.php';
+}
+
+	?>
+</div>
+<div class="header">
+
 	<div class='parent'>
-  <div class='child1'><h1 class="text">NEQULOS</h1>
+  <div class='child1'><h1 class="text">NEQULOS FILEOP</h1>
   <br>
-  <p class="logoslogan">Version 1.5S</p></div>
+  <p class="logoslogan"><?php echo($wordversionn1);?> 2.0S</p></div>
   <div class='child3'><div class="textright">
-  <p class="namesr"><?php if ($servername){echo $servername;} else{echo "NEQULOS";}?>
+  <p class="namesr"><?php if ($servername){echo $servername;} else{echo $wordservern1;}?>
 	</p>
-	<p><?php if ($description){echo $description;} else{echo "Server";}?>
+	<p><?php if ($description){echo $description;} else{echo "NEQULOS FILEOP";}?>
 	</p>
   <?php
+    echo("<a href='settings.php'>" . $wordsettings . "</a><br>");
   if($PASSWORD){
-    echo("<a href='logoutadmin.php'>Logout</a>");
+    echo("<a href='logoutadmin.php'>" . $wordlogout . "</a>");
   }
+
   ?>
   
 </div>
 </div>
   <div class='child2'><div class="textright">
-  <p class="namesr">Server
+  <p class="namesr"><?php echo($wordservern1);?>
 	</p>
-	<p>Description
+	<p><?php echo($worddescription);?>
 	</p>
-  
+	<p><?php echo ($wordlinks);?>
+	</p>
 </div>
 </div>
 </div>
 <div class="headermini">
-<b class="namesr" style="color:black;border-bottom:2px black solid">Dashboard
+<b class="namesr" style="color:black;border-bottom:2px black solid"><?php echo($worddashboard);?>
 </b>
 </div>
 
 </div>
-<div class="container">
-<style>
-body {
-	background-color: #242424;
-	color: white;
-	font-family: "lucida grande","Segoe UI",Arial, sans-serif; font-size: 14px;width:1024;margin:0;}
-th {font-weight: normal; color: white; background-color: #383838; padding:.5em 1em .5em 0.5em;
-	text-align: left;cursor:pointer;user-select: none;}
-th .indicator {margin-left: 6px }
-thead {border-top: 1px solid #e39400; border-bottom: 1px solid #e39400;border-left: 1px solid #e39400;
-	border-right: 1px solid #e39400; }
-#top {height:52px;}
-#mkdir {position:relative;}
-label { display:block; font-size:11px; color:white; padding-bottom:10px;}
-#file_drop_target {width:500px; padding:12px 0; border: 4px dashed #ccc;font-size:12px;color:#ccc;
-	text-align: center;float:left;margin-right:20px;}
-#file_drop_target.drag_over {border: 4px dashed #96C4EA; color: #96C4EA;}
-#upload_progress {padding: 4px 0;margin-left:28px;margin-top:28px;}
-#upload_progress .error {color:#a00;}
-#upload_progress > div { padding:3px 0;}
-.no_write #mkdir, .no_write #file_drop_target {display: none}
-.progress_track {display:inline-block;width:200px;height:10px;border:1px solid #333;margin: 0 4px 0 10px;}
-.progress {background-color: #82CFFA;height:10px; }
-footer {font-size:11px; color:#bbbbc5; padding:4em 0 0;text-align: left;}
-footer a, footer a:visited {color:#bbbbc5;}
-#breadcrumb {margin-left:30px;}
-#folder_actions {width: 50%;float:right;}
-a, a:visited { color:#e39400; text-decoration: none;padding-bottom:25px;}
-a:hover {text-decoration: underline}
-.sort_hide{ display:none;}
-table {border-collapse: collapse;width:100%;border-collapse: collapse;margin-top:10px;}
-thead {max-width: 1024px}
-td { padding:0.6em 0.6em 0.6em 0.6em; border-bottom:1px solid #def;height:30px; font-size:12px;white-space: nowrap;border:1px solid #e39400;}
-td.first {font-size:14px;white-space: normal;}
-td.empty { color:#777; font-weight: bold; text-align: center;padding:3em 0;}
-.is_dir .size {color:transparent;font-size:0;}
-.is_dir .size:before {content: "--"; font-size:14px;color:#e39400;}
-.is_dir .download{visibility: hidden}
-a.delete {display:inline-block;
-	color:#d00;	margin-left: 15px;font-size:11px;padding:0 0 0 13px;
-}
-.name {
-	padding-left:25px;
-}
-.is_dir .name {
-	padding-left:5px;
-}
-.download {
-	padding:4px 0 4px 4px;
-}
-.header {
-  padding: 15px;
-  background: white;
-  color: #e39400;
-  font-size: 15px;
 
-}
-
-.container{
-	padding:2em;
-}
-.foldertextc{
-	color:white;
-	margin-top:20px;
-}
-.textright{
-	padding-left:5px;
-	color:black;
-	padding-right:5px;
-}
-.text{
-	margin-bottom:5px;
-	margin-top:5px;
-	font-size: 46px;
-  background:
-	  linear-gradient(to right,
-		  red,
-		  #ff6600);
-  display: inline-block;
-
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.logoslogan{
-margin-top:5px;
-margin-bottom:5px;
-	font-size: 12px;
-  background:
-	  linear-gradient(to right,
-		  red,
-		  #ff6600);
-  display: inline-block;
-
-
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.parent {
-  text-align: left;
-}
-.child1 {
-  display: inline-block;
-  padding-top: 1rem 1rem;
-  padding-bottom: 1rem 1rem;
-  vertical-align: right;
-  margin-bottom:15px;
-}
-.child2 {
-	margin-top:1rem;
-  display: inline-block;
-  padding-top: 1rem 1rem;
-  padding-bottom: 1rem 1rem;
-  text-align: right;
-  float:right;
-  font-size:12px;
-}
-.child3 {
-	border:none;
-	font-size:12px;
-	margin-top:1rem;
-  display: inline-block;
-  padding-top: 1rem 1rem;
-  padding-bottom: 1rem 1rem;
-  text-align: left;
-  float:right;
-  background:linear-gradient(white, white) padding-box,
-	  linear-gradient(to top,
-		  red,
-		  #ff6600) border-box;
-		  border-left: 3px solid transparent;
-}
-.namesr {
-margin:0px;
-}
-.headermini {
- border-top:1px solid  #e6e6e6;
-  background: white;
-  color: #e39400;
-  font-size: 15px;
-padding-top:10px;
-}
-hr{border:0;border-top:1px solid #444444;margin:20px 0}
-		progress[value] {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 200px;
-        height: 15px;
-		margin-left: 10px;
-		margin-right: 10px;
-      }
-      progress[value]::-webkit-progress-bar {
-        background-color: #cccccc;
-      }
-	  progress[value]::-webkit-progress-value {
-			background-color: orange;
-			background-size: 20px 15px, 100% 100%, 100% 100%;
-		  }
-.newfoldercreation{
-}
-.button {
-	font-size: 46px;
-  background:
-	  linear-gradient(to right,
-		  red,
-		  #ff6600);
-  display: inline-block;
-  border: none;
-  color: white;
-  padding: 5px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor: pointer;
-}
-.button:hover {
-  background-color: rgba(15, 114, 201, 0.806); 
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 0px;
-  cursor: pointer;
-}
-.button:active {
-  background-color: rgba(15, 114, 201, 0.902); 
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 10px 0px;
-  cursor: pointer;
-}
-
-input[type=text] {
-	padding-bottom:5px;
-	padding-top:5px;
-  
-}
-input[type=password] {
-  width: 100%;
-  padding: 12px 0px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  border-bottom: 1px solid black;
-  border-top:none;
-  border-left:none;
-  border-right:none;
-  outline: none !important;
-}
-.breadcrumbnav{
-	padding:20px;
-	float:left;
-}
-hr.style-one {
-margin: 5px;
-}
-.mainsection{
-	background-color:grey;
-}
-
-
-.parent1 {
-  margin: 1rem;
-  text-align: center;
-}
-.parent2 {
-}
-.child {
-  display: inline-block;
-  padding: 15px;
-	border-radius: 5px;
-	background-color:#333333;
-  vertical-align: top;
-  text-align: left;
-  margin:5px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.childp2 {
-  display: inline-block;
-  vertical-align: bottom;
-  text-align: left;
-}
-input[type=submit] {
-  background:linear-gradient(to right,red,#ff6600);
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  border-radius:5px;
-  padding:5px;
-}
-input[type=submit]:hover {
-  background:linear-gradient(to left,red,#ff6600);
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  cursor:pointer;
-}
-h3{
-	font-size:20px;
-	font-weight:normal;
-}
-</style>
 <script src="./jquery.min.js"></script>
 <!-- jquery not in use -->
 <script>
@@ -684,6 +457,7 @@ $(function(){
 			uploadFile(file);
 		});
 	});
+	
 
 
 	function uploadFile(file) {
@@ -715,6 +489,7 @@ $(function(){
 			}
 		};
 	    xhr.send(fd);
+		
 	}
 	function renderFileUploadRow(file,folder) {
 		return $row = $('<div/>')
@@ -738,7 +513,7 @@ $(function(){
 				$.each(data.results,function(k,v){
 					$tbody.append(renderFileRow(v));
 				});
-				!data.results.length && $tbody.append('<tr><td class="empty" colspan=5>This folder is empty</td></tr>')
+				!data.results.length && $tbody.append('<tr><td class="empty" colspan=5>∅</td></tr>')
 				data.is_writable ? $('body').removeClass('no_write') : $('body').addClass('no_write');
 			} else {
 				console.warn(data.error.msg);
@@ -748,17 +523,17 @@ $(function(){
 	}
 	function renderFileRow(data) {
 		var $link = $('<a class="name" />')
-			.attr('href', data.is_dir ? '#' + encodeURIComponent(data.path) : './' + data.path)
+			.attr('href', data.is_dir ? '#' + encodeURIComponent(data.path) : './your_files/' + data.path)
 			.text(data.name);
 		var allow_direct_link = <?php echo $allow_direct_link?'true':'false'; ?>;
         	if (!data.is_dir && !allow_direct_link)  $link.css('pointer-events','none');
 		var $dl_link = $('<a/>').attr('href','?do=download&file='+ encodeURIComponent(data.path))
-			.addClass('download').text('download');
-		var $delete_link = $('<a href="#" />').attr('data-file',data.path).addClass('delete').text('delete');
+			.addClass('download').text('↓');
+		var $delete_link = $('<a href="#" />').attr('data-file',data.path).addClass('delete').text('✕');
 		var perms = [];
-		if(data.is_readable) perms.push('read');
-		if(data.is_writable) perms.push('write');
-		if(data.is_executable) perms.push('exec');
+		if(data.is_readable) perms.push('r');
+		if(data.is_writable) perms.push('w');
+		if(data.is_executable) perms.push('e');
 		var $html = $('<tr />')
 			.addClass(data.is_dir ? 'is_dir' : '')
 			.append( $('<td class="first" />').append($link) )
@@ -771,7 +546,7 @@ $(function(){
 	}
 	function renderBreadcrumbs(path) {
 		var base = "",
-			$html = $('<div/>').append( $('<a href=#>Home</a></div>') );
+			$html = $('<div/>').append( $('<a href=#>~</a></div>') );
 		$.each(path.split('%2F'),function(k,v){
 			if(v) {
 				var v_as_text = decodeURIComponent(v);
@@ -783,17 +558,17 @@ $(function(){
 		return $html;
 	}
 	function formatTimestamp(unix_timestamp) {
-		var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var m = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
 		var d = new Date(unix_timestamp*1000);
-		return [m[d.getMonth()],' ',d.getDate(),', ',d.getFullYear()," ",
+		return [m[d.getMonth()],'/',d.getDate(),'/',d.getFullYear()," ",
 			(d.getHours() % 12 || 12),":",(d.getMinutes() < 10 ? '0' : '')+d.getMinutes(),
 			" ",d.getHours() >= 12 ? 'PM' : 'AM'].join('');
 	}
 	function formatFileSize(bytes) {
-		var s = ['bytes', 'KB','MB','GB','TB','PB','EB'];
+		var s = ['B','KB','MB','GB','TB','PB','EB'];
 		for(var pos = 0;bytes >= 1000; pos++,bytes /= 1024);
 		var d = Math.round(bytes*10);
-		return pos ? [parseInt(d/10),".",d%10," ",s[pos]].join('') : bytes + ' bytes';
+		return pos ? [parseInt(d/10),".",d%10," ",s[pos]].join('') : bytes + ' B';
 	}
 })
 
@@ -802,15 +577,19 @@ $(function(){
 </head>
 <body>
 	
+<div class='parent1'>
+<h2 style='text-align:left;padding-left:10px;'><?php echo($lineimportsandfoldercreation);?></h2>
+<div class='child'>	
 <div id="top">
+	
    <?php if($allow_create_folder): ?>
 	<form action="?" method="post" id="mkdir">
 	<div class='parent2'>
 	<div class='childp2'>
-		<label for=dirname>Create New Folder</label><input id=dirname type=text name=name value="" required/>
+		<label for=dirname><?php echo($linecreatenewfolder);?></label><input id=dirname type=text name=name value="" required/>
    </div>
    <div class='childp2'>
-		<input type="submit" value="Create" />
+		<input type="submit" value="<?php echo($wordcreate);?>" />
    </div>
    </div>
 		
@@ -821,29 +600,37 @@ $(function(){
    <?php if($allow_upload): ?>
 	<br>
 	<div id="file_drop_target">
-		Drag Files Here To Upload
-		<b>or</b>
-		<input type="file" multiple />
+	<?php echo($linedragfileshere);?>
+		<b><?php echo($wordor)?></b>
+		<button style="cursor:pointer" onclick="$('#input').click()"><?php echo($linechoosefiles);?></button>
+<input type="file" multiple id="input" style="display:none;">
+		  
 	</div>
 	<br>
-	
-   <?php endif; ?>
    
+   <?php endif; ?>
    </div>
-<div id="upload_progress"></div>
-<br>
+   </div>
+ 
+
+<div class='parent1'>
+<h2 style='text-align:left;padding-left:10px;'><?php echo($wordfiles);?></h2>
+<div class='child'>
+	<br>
+	<h2 style="font-size:20px;">
 <div id="breadcrumb">&nbsp;</div>
+   </h2>
 <div class="container">
 <table id="table">
 
 <thead>
 <tr>
 
-	<th>Name</th>
-	<th>Size</th>
-	<th>Modified</th>
-	<th>Permissions</th>
-	<th>Actions</th>
+	<th><?php echo($wordtablename);?></th>
+	<th><?php echo($wordtablesize);?></th>
+	<th><?php echo($wordtablemodified);?></th>
+	<th><?php echo($wordtablepermissions);?></th>
+	<th><?php echo($wordtableactions);?></th>
 </tr></thead><tbody id="list">
   
 </tbody></table>
@@ -851,89 +638,37 @@ $(function(){
 </div>
 </div>
 </div>
-<div class='parent1'>
-<div class='child'>
-  <h2>Config</h2>
-  <h3>
-	<?php
-echo '<hr>';
-echo 'Your Configuration File Settings:';
-echo '<br>';
-?>
-<?php
-echo '<br>';
-echo("Server Name: " . $servername);
-echo '<br>';
-echo("Server Description: " . $description);
-echo '<br>';
-if($recoverypassword){
-	echo ("Recovery Password = 1<br>");
-	echo ("Recovery Password: " . $recoverypassword);
-}
-else{
-	echo ("Recovery Password = 0");
-}
-echo '<br>';
-
-if($PASSWORD){
-	echo ("Password = 1<br>");
-	echo ("Password: " . $PASSWORD);
-}
-else{
-	echo ("Password = 0");
-}
-echo '<br>';
-if($allow_delete){
-	echo ("Allow Delete = " . $allow_delete);
-}
-else{
-	echo("Allow Delete = 0");
-}
-echo '<br>';
-if($allow_upload){
-	echo ("Allow Upload = " . $allow_upload);
-}
-else{
-	echo("Allow Upload = 0");
-}
-echo '<br>';
-if($allow_create_folder){
-	echo ("Allow Create Folder = " . $allow_create_folder);
-}
-else{
-	echo("Allow Create Folder = 0");
-}
-echo '<br>';
-if($allow_direct_link){
-	echo ("Allow Direct Link = " . $allow_direct_link);
-}
-else{
-	echo("Allow Direct Link = 0");
-}
-echo '<br>';
-if($allow_show_folders){
-	echo ("Allow Show Folders = " . $allow_show_folders);
-}
-else{
-	echo("Allow Show Folders = 0");
-}
-echo("<br>");
-echo ("Hidden Patterns: " . json_encode($hidden_patterns));
-echo("<br>");
-echo ("Disallowed Patterns: " . json_encode($disallowed_patterns));
-?>
-</h3>
-<script>
-    $(document).ready(function(){
-        setInterval(function() {
-            $("#name").load("#file");
-        }, 500);
-    });
-
-</script>
-<div id="#name">
-	<!-- Waiting text before file loads -->
    </div>
+   </div>
+ <div class='parent1'>
+   <h2 style='text-align:left;padding-left:10px;'><?php echo($lineuploadprogress);?></h2>
+   <div class='child'>
+   <?php echo($lineoverallprogress);?>
+<div id="upload_progress"></div>
+   </div>
+   </div>
+	<?php
+if ($filetest){
+if ($filetest == true){
+	include("mainfiletest.php");
+}
+else {
+   
+}
+}
+else{
+	
+}
+?>
+<div class='parent1'>
+
+<div class="child">
+<h2><?php echo($linehelpguide);?></h2>
+<hr>
+<?php
+include('nqshelpguide.php');
+?>
+<br>
 </div>
 <style>
 .footer {
@@ -946,8 +681,7 @@ echo ("Disallowed Patterns: " . json_encode($disallowed_patterns));
 }
 </style>
 <div class="footer">
-  <p>This software has been created by NEQULOS Team.</p>
-  <p>NEQULOS is a powerful file manager.</p>
-  <p>NEQULOS &copy; All rights reserved.</p>
+  <p>NEQULOS &copy; <?php echo($lineallrightsreservedn1);?></p>
 </div>
+
 </body></html>
